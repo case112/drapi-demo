@@ -1,32 +1,51 @@
-    export default async function Home() {
-    const data = await fetch(
-        "https://mwr.mikkis.shop/api/lists/all-approvals?dataSource=approvals",
-    );
-    const approvals: any[] = await data.json();
+"use client";
 
-    console.log(approvals);
+import { useState } from "react";
 
-    const listApprovals = approvals.map((a) => (
-        <tr  key={a["@unid"]}>
-            <td>{a["@index"]}</td>
-            <td>{new Date(a["$1"]).toLocaleString("et-EE")}</td>
-            <td>{a.Subject}</td>
-            <td>{a["@unid"]}</td>
-        </tr>
-    ));
+export default function Home() {
+    const [approvals, setApprovals] = useState<any[] | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const loadResults = async () => {
+        setLoading(true);
+
+        try {
+            const res = await fetch(
+                "https://mwr.mikkis.shop/api/lists/all-approvals?dataSource=approvals"
+            );
+            const data = await res.json();
+            setApprovals(data);
+        } catch (err) {
+            console.error(err);
+        }
+
+        setLoading(false);
+    };
 
     return (
         <main>
-        <div>
-            <br></br>
-            {listApprovals && 
-            <table border={1} cellPadding={2} style={{ borderStyle: "dotted", borderRadius: 5}} >
-                <tbody>
-                {listApprovals}
-                </tbody>
-            </table>
-            }
-        </div>
+            <div>
+                <button onClick={loadResults}>
+                    {loading ? "Loading..." : "GET results"}
+                </button>
+
+                <br />
+
+                {approvals && (
+                    <table border={1} cellPadding={2} style={{ borderStyle: "dotted", borderRadius: 5 }}>
+                        <tbody>
+                            {approvals.map((a) => (
+                                <tr key={a["@unid"]}>
+                                    <td>{a["@index"]}</td>
+                                    <td>{new Date(a["$1"]).toLocaleString("et-EE")}</td>
+                                    <td>{a.Subject}</td>
+                                    <td>{a["@unid"]}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
         </main>
     );
-    }
+}
