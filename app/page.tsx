@@ -30,12 +30,13 @@ export default function Home() {
                 </button>
 
                 <br />
+                <br />
 
                 {approvals && (
                     <table border={1} cellPadding={2} style={{ borderStyle: "dotted", borderRadius: 5 }}>
                         <tbody>
-                            {approvals.map((a) => (
-                                <tr key={a["@unid"]}>
+                            {approvals.map((a, index) => (
+                                <tr key={a["@unid"]} style={{ backgroundColor: index % 2 === 0 ? "#fff" : "#d8d8d8"}}>
                                     <td>{a["@index"]}</td>
                                     <td>{new Date(a["$1"]).toLocaleString("et-EE")}</td>
                                     <td>{a.Subject}</td>
